@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>대충 만든 마스크맵</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+  <!-- Custom styles for this template -->
+  <link href="css/landing-page.min.css" rel="stylesheet">
+
+</head> 
+
+<body style="height: 100%;">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-light bg-light static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">더우존 마스크맵</a>
+      <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+          <form id="fsearch" name="fsearch" method="post" onsubmit="return false;">
+            <div class="form-row">
+              <div class="col-12 col-md-9 mb-2 mb-md-0">
+                <input type="text" id="fsearch_addr" style="ime-mode:active;" class="form-control form-control-lg" placeholder="지번, 도로명, 지하철역 검색..." onchange="GetAddr();">
+                
+              </div>
+              <div class="col-12 col-md-3">
+                <button type="submit" id="btn_search" class="btn btn-block btn-lg btn-primary">검색ㄱㄱ</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      <a id="btn" class="btn btn-primary" href="#" >로그인</a>
+    </div>
+  </nav>
+
+
+
+
+	<div id="map" style="width:100%;height:93%;"></div>
+  <!-- Masthead -->
+ 
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=68276cfafcbcd6436c8d170b0b864d18&libraries=services,clusterer,drawing"></script>
+	<script>		
+	
+		var MapData;
+		var lat = 37.4797056;
+		var lng = 126.9984853;
+		var m = 1000;
+		var mapContainer = document.getElementById('map'); // 지도를 표시할 div 
+		var btnClick = document.getElementById('btn');
+		var marker;
+	    var mapOption = { 
+	        center: new kakao.maps.LatLng(lat, lng), // 지도의 중심좌표
+	        level: 3 // 지도의 확대 레벨
+	    };
+	    
+	    var newMap = new kakao.maps.Map(mapContainer, mapOption);
+	
+		// 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+		var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+		// 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+		var mapTypeControl = new kakao.maps.MapTypeControl();
+
+		// 지도 타입 컨트롤을 지도에 표시합니다
+		map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+		
+		// 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+		var zoomControl = new kakao.maps.ZoomControl();
+		map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+		
+		
+		// 지도에 교통정보를 표시하도록 지도타입을 추가합니다
+		/* map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC); */ 
+		
+		var arr_krw_markets = 'KRW-BTC,KRW-ETH';
+
+		
+		
+		kakao.maps.event.addListener(map, 'idle', function() {
+			
+			
+			
+		    // 지도의  레벨을 얻어옵니다
+		    var level = map.getLevel();
+
+		    // 지도의 중심좌표를 얻어옵니다 
+		    var latlng = map.getCenter(); 
+		    lat = latlng.getLat();
+		    lng = latlng.getLng();
+			if(level > 3) {
+				m = 5000;
+			} else if (level == 3) {
+				m = 2500;
+			} else if (level == 2) {
+				m = 1000;
+			} else if (level == 1) {
+				m = 500;
+			}
+			
+			// 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+			
+			settingMarker(lat,lng, m);
+					
+			console.log(m);
+		});
+		
+		
+		btn.addEventListener('click', function() {
+			var test = "";
+			var test1 = "    ";
+			
+			if((test != "" || test1.trim() != "") && test != null) {
+				alert('11111');
+			} else {
+				alert('dddddddd');
+				
+			}
+		});
+		
+		
+		function btnClick() {
+			console.log(1);
+			/* <% RequestDispatcher dispatcher = request.getRequestDispatcher("home.jsp"); %> */
+			/* dispatcher.include(request, response); */
+		}
+		 
+	 	
+	 	
+		
+		function settingMarker(lat,lng, m) {
+				
+			//https://8oi9s0nnth.apigw.ntruss.com/corona19-masks/v1/storesByGeo/json?lat=34&lng=125&m=5000
+			$.ajax({
+		          url: "https://8oi9s0nnth.apigw.ntruss.com/corona19-masks/v1/storesByGeo/json?lat=" + lat + "&lng=" + lng + "&m=" + m,
+		          dataType: "json"
+		        }).done(function(tickers){
+
+		        	for(var i = 0; i < tickers.count; i++) {
+		        		var imageSrc,
+		        		imageSize = new kakao.maps.Size(52, 40), // 마커이미지의 크기입니다
+					    imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+					    
+		        		if(tickers.stores[i].remain_stat == "plenty") {
+		        			imageSrc = 'https://maskmap.site/images/ic_enough@3x.png';    
+		        		} else if(tickers.stores[i].remain_stat == "some") {
+		        			imageSrc = "https://maskmap.site/images/ic_normal@3x.png";
+		        		} else if(tickers.stores[i].remain_stat == "few") {
+		        			imageSrc = "https://maskmap.site/images/ic_lack@3x.png";
+		        		} else if(tickers.stores[i].remain_stat == "empty") {
+		        			imageSrc = ""
+		        		} else if(tickers.stores[i].remain_stat == "break") {
+		        			imageSrc = "https://maskmap.site/images/ic_sold_out@3x.png";
+		        		} else {
+		        			imageSrc = "https://maskmap.site/images/ic_no_data@3x.png";
+		        		}
+					    
+						 
+					 	// 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+					    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+					        markerPosition = new kakao.maps.LatLng(tickers.stores[i].lat, tickers.stores[i].lng); // 마커가 표시될 위치입니다
+						
+					    
+					        
+					    // 마커를 생성합니다
+					   	marker = new kakao.maps.Marker({
+					        position: markerPosition, 
+					        image: markerImage // 마커이미지 설정 
+					    });
+					   	
+					        
+					   	
+					    // 마커가 지도 위에 표시되도록 설정합니다
+					    
+					    marker.setMap(map);
+					}
+		        });
+		}
+		getInfo();
+		
+		function getInfo() {
+		    // 지도의 현재 중심좌표를 얻어옵니다 
+		    var center = map.getCenter(); 
+		    
+		    // 지도의 현재 레벨을 얻어옵니다
+		    var level = map.getLevel();
+		    
+		    // 지도타입을 얻어옵니다
+		    var mapTypeId = map.getMapTypeId(); 
+		    
+		    // 지도의 현재 영역을 얻어옵니다 
+		    var bounds = map.getBounds();
+		    
+		    // 영역의 남서쪽 좌표를 얻어옵니다 
+		    var swLatLng = bounds.getSouthWest(); 
+		    
+		    // 영역의 북동쪽 좌표를 얻어옵니다 
+		    var neLatLng = bounds.getNorthEast(); 
+		    
+		    // 영역정보를 문자열로 얻어옵니다. ((남,서), (북,동)) 형식입니다
+		    var boundsStr = bounds.toString();
+		    
+		    
+		    var message = '지도 중심좌표는 위도 ' + center.getLat() + ', <br>';
+		    message += '경도 ' + center.getLng() + ' 이고 <br>';
+		    message += '지도 레벨은 ' + level + ' 입니다 <br> <br>';
+		    message += '지도 타입은 ' + mapTypeId + ' 이고 <br> ';
+		    message += '지도의 남서쪽 좌표는 ' + swLatLng.getLat() + ', ' + swLatLng.getLng() + ' 이고 <br>';
+		    message += '북동쪽 좌표는 ' + neLatLng.getLat() + ', ' + neLatLng.getLng() + ' 입니다';
+		    
+		    // 개발자도구를 통해 직접 message 내용을 확인해 보세요.
+		    // ex) console.log(message);
+		}
+		
+		const b = 5;
+	    const a = 3;
+	    var result ="";
+	    for(var i=0; i < a; i++) {
+	        for(var j=0; j < b; j++) {
+	            result += "*";
+	        }
+	        result += '\n';
+	    }
+	     console.log(result);
+	     
+	     var v = [[1, 4], [3, 4], [3, 10]];
+	     solution(v);
+	     function solution(v) {
+	    	 var answer = [ [] ];
+	    	 
+	    	 answer[0] = v[0][0]^v[1]0]^v[2][0];
+	    	 answer[1] = v[0][1]^v[1][1]^v[2][1];
+	    	 
+	    	 console.log(answer);
+	     }
+	     
+	     
+
+	</script>
+
+
+</body>
+
+</html>
